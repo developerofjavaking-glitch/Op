@@ -20,15 +20,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.BookmarkBorder
 import androidx.compose.material.icons.filled.ContentCopy
-import androidx.compose.material.icons.filled.Language
-import androidx.compose.material.icons.filled.OpenInBrowser
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Share
@@ -40,6 +37,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -57,14 +55,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.data.model.ParsedQrResult
 import com.example.data.model.QrType
-import com.example.ui.theme.EmeraldGreen
-import com.example.ui.theme.NeonCyan
-import com.example.ui.theme.ScannerBorder
-import com.example.ui.theme.ScannerSurface
-import com.example.ui.theme.ScannerSurfaceVariant
-import com.example.ui.theme.TextMuted
-import com.example.ui.theme.TextSubtle
-import com.example.ui.theme.TextWhite
+import com.example.ui.theme.ClassicAmber
+import com.example.ui.theme.ClassicBlue
+import com.example.ui.theme.ClassicBlueContainer
+import com.example.ui.theme.ClassicBorder
+import com.example.ui.theme.ClassicSurface
+import com.example.ui.theme.ClassicSurfaceVariant
+import com.example.ui.theme.TextDarkMuted
+import com.example.ui.theme.TextDarkPrimary
+import com.example.ui.theme.TextDarkSecondary
+import com.example.ui.theme.TextLight
 import kotlinx.coroutines.launch
 import java.net.URLEncoder
 
@@ -83,17 +83,17 @@ fun ScanResultSheet(
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
-        containerColor = ScannerSurface,
-        scrimColor = Color(0x99000000),
-        shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)
+        containerColor = ClassicSurface,
+        scrimColor = Color(0x66000000),
+        shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 20.dp, vertical = 8.dp)
+                .padding(horizontal = 22.dp, vertical = 8.dp)
                 .verticalScroll(rememberScrollState())
         ) {
-            // QR Type Header Pill + Favorite Icon
+            // QR Type Header Pill + Favorite Bookmark Icon
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -101,22 +101,21 @@ fun ScanResultSheet(
             ) {
                 Box(
                     modifier = Modifier
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(result.type.color.copy(alpha = 0.15f))
-                        .border(1.dp, result.type.color.copy(alpha = 0.5f), RoundedCornerShape(8.dp))
-                        .padding(horizontal = 10.dp, vertical = 5.dp)
+                        .clip(RoundedCornerShape(10.dp))
+                        .background(result.type.color.copy(alpha = 0.12f))
+                        .padding(horizontal = 12.dp, vertical = 6.dp)
                 ) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(
                             imageVector = result.type.icon,
                             contentDescription = null,
                             tint = result.type.color,
-                            modifier = Modifier.size(16.dp)
+                            modifier = Modifier.size(18.dp)
                         )
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
                             text = result.type.title,
-                            fontSize = 12.sp,
+                            fontSize = 13.sp,
                             fontWeight = FontWeight.Bold,
                             color = result.type.color
                         )
@@ -129,45 +128,46 @@ fun ScanResultSheet(
                 ) {
                     Icon(
                         imageVector = if (isFavorite) Icons.Default.Bookmark else Icons.Default.BookmarkBorder,
-                        contentDescription = "Bookmark",
-                        tint = if (isFavorite) NeonCyan else TextMuted
+                        contentDescription = "Save to Bookmarks",
+                        tint = if (isFavorite) ClassicAmber else TextDarkMuted,
+                        modifier = Modifier.size(26.dp)
                     )
                 }
             }
 
             Spacer(modifier = Modifier.height(14.dp))
 
-            // Main Title & Subtitle
+            // Main Title & Subtitle (High Contrast, Large Font)
             Text(
                 text = result.title,
-                fontSize = 20.sp,
+                fontSize = 22.sp,
                 fontWeight = FontWeight.Bold,
-                color = TextWhite
+                color = TextDarkPrimary
             )
 
             Spacer(modifier = Modifier.height(6.dp))
 
             Text(
                 text = result.subtitle,
-                fontSize = 13.sp,
-                color = TextMuted,
-                lineHeight = 18.sp
+                fontSize = 15.sp,
+                color = TextDarkSecondary,
+                lineHeight = 22.sp
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(18.dp))
 
-            // Fields Table (if any)
+            // Key Details Breakdown Box (if fields exist)
             if (result.fields.isNotEmpty()) {
                 Card(
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(14.dp),
-                    colors = CardDefaults.cardColors(containerColor = ScannerSurfaceVariant),
-                    border = CardDefaults.outlinedCardBorder().copy(brush = androidx.compose.ui.graphics.SolidColor(ScannerBorder))
+                    shape = RoundedCornerShape(16.dp),
+                    colors = CardDefaults.cardColors(containerColor = ClassicSurfaceVariant),
+                    border = CardDefaults.outlinedCardBorder().copy(brush = androidx.compose.ui.graphics.SolidColor(ClassicBorder))
                 ) {
-                    Column(modifier = Modifier.padding(14.dp)) {
+                    Column(modifier = Modifier.padding(16.dp)) {
                         result.fields.entries.forEachIndexed { index, entry ->
                             if (index > 0) {
-                                Spacer(modifier = Modifier.height(8.dp))
+                                Spacer(modifier = Modifier.height(10.dp))
                             }
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
@@ -176,55 +176,55 @@ fun ScanResultSheet(
                             ) {
                                 Text(
                                     text = entry.key,
-                                    fontSize = 12.sp,
-                                    color = TextSubtle,
+                                    fontSize = 13.sp,
+                                    color = TextDarkMuted,
                                     fontWeight = FontWeight.SemiBold
                                 )
                                 Text(
                                     text = entry.value,
-                                    fontSize = 13.sp,
-                                    color = TextWhite,
-                                    fontWeight = FontWeight.Medium
+                                    fontSize = 15.sp,
+                                    color = TextDarkPrimary,
+                                    fontWeight = FontWeight.Bold
                                 )
                             }
                         }
                     }
                 }
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(20.dp))
             }
 
-            // Primary Action Button
+            // Prominent Primary Action Button
             Button(
                 onClick = {
                     executePrimaryAction(context, result)
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(52.dp)
+                    .height(54.dp)
                     .testTag("primary_qr_action_button"),
                 shape = RoundedCornerShape(14.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = result.type.color,
-                    contentColor = Color.Black
+                    contentColor = TextLight
                 )
             ) {
                 Icon(
                     imageVector = result.type.icon,
                     contentDescription = null,
-                    modifier = Modifier.size(20.dp)
+                    modifier = Modifier.size(22.dp)
                 )
-                Spacer(modifier = Modifier.width(8.dp))
+                Spacer(modifier = Modifier.width(10.dp))
                 Text(
                     text = result.type.actionLabel,
-                    fontSize = 15.sp,
+                    fontSize = 16.sp,
                     fontWeight = FontWeight.Bold
                 )
             }
 
-            Spacer(modifier = Modifier.height(14.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
-            // Action Quick Tools Row (Copy, Share, Web Search)
+            // Quick Tools Row (Copy, Share, Google Search)
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
@@ -255,7 +255,7 @@ fun ScanResultSheet(
 
                 QuickActionChip(
                     icon = Icons.Default.Search,
-                    label = "Google",
+                    label = "Search",
                     modifier = Modifier.weight(1f),
                     onClick = {
                         val query = URLEncoder.encode(result.rawText, "UTF-8")
@@ -272,7 +272,7 @@ fun ScanResultSheet(
             Spacer(modifier = Modifier.height(16.dp))
 
             // Rescan Button
-            Button(
+            OutlinedButton(
                 onClick = {
                     scope.launch {
                         sheetState.hide()
@@ -281,21 +281,19 @@ fun ScanResultSheet(
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(46.dp)
+                    .height(50.dp)
                     .testTag("rescan_button"),
-                shape = RoundedCornerShape(12.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = ScannerSurfaceVariant,
-                    contentColor = TextWhite
-                )
+                shape = RoundedCornerShape(14.dp),
+                colors = ButtonDefaults.outlinedButtonColors(contentColor = TextDarkPrimary)
             ) {
                 Icon(
                     imageVector = Icons.Default.Refresh,
                     contentDescription = "Scan Again",
-                    modifier = Modifier.size(18.dp)
+                    modifier = Modifier.size(20.dp),
+                    tint = TextDarkPrimary
                 )
                 Spacer(modifier = Modifier.width(8.dp))
-                Text("Scan Another Code", fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
+                Text("Scan Another Code", fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
             }
 
             Spacer(modifier = Modifier.height(28.dp))
@@ -313,25 +311,25 @@ fun QuickActionChip(
     Box(
         modifier = modifier
             .clip(RoundedCornerShape(12.dp))
-            .background(ScannerSurfaceVariant)
-            .border(1.dp, ScannerBorder, RoundedCornerShape(12.dp))
+            .background(ClassicSurface)
+            .border(1.dp, ClassicBorder, RoundedCornerShape(12.dp))
             .clickable(onClick = onClick)
-            .padding(vertical = 10.dp),
+            .padding(vertical = 12.dp),
         contentAlignment = Alignment.Center
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(
                 imageVector = icon,
                 contentDescription = label,
-                tint = NeonCyan,
-                modifier = Modifier.size(16.dp)
+                tint = ClassicBlue,
+                modifier = Modifier.size(18.dp)
             )
             Spacer(modifier = Modifier.width(6.dp))
             Text(
                 text = label,
-                fontSize = 12.sp,
+                fontSize = 13.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = TextWhite
+                color = TextDarkPrimary
             )
         }
     }

@@ -25,13 +25,13 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BookmarkAdd
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Palette
-import androidx.compose.material.icons.filled.QrCode2
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.ScrollableTabRow
@@ -58,15 +58,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.data.model.QrType
-import com.example.ui.theme.ElectricViolet
-import com.example.ui.theme.EmeraldGreen
-import com.example.ui.theme.NeonCyan
-import com.example.ui.theme.ScannerBorder
-import com.example.ui.theme.ScannerDarkBg
-import com.example.ui.theme.ScannerSurface
-import com.example.ui.theme.ScannerSurfaceVariant
-import com.example.ui.theme.TextMuted
-import com.example.ui.theme.TextWhite
+import com.example.ui.theme.ClassicBg
+import com.example.ui.theme.ClassicBlue
+import com.example.ui.theme.ClassicBlueContainer
+import com.example.ui.theme.ClassicBorder
+import com.example.ui.theme.ClassicBorderLight
+import com.example.ui.theme.ClassicGreen
+import com.example.ui.theme.ClassicGreenContainer
+import com.example.ui.theme.ClassicSurface
+import com.example.ui.theme.ClassicSurfaceVariant
+import com.example.ui.theme.TextDarkMuted
+import com.example.ui.theme.TextDarkPrimary
+import com.example.ui.theme.TextDarkSecondary
+import com.example.ui.theme.TextLight
 import com.example.util.QrCodeGenerator
 
 data class ColorThemePreset(
@@ -105,12 +109,12 @@ fun GeneratorScreen(
     // Phone
     var phoneNumber by remember { mutableStateOf("") }
 
-    // Color presets
+    // Classic & accessible color presets
     val presets = listOf(
-        ColorThemePreset("Classic", Color.Black, Color.White),
-        ColorThemePreset("Cyber Cyan", NeonCyan, ScannerDarkBg),
-        ColorThemePreset("Electric", ElectricViolet, ScannerDarkBg),
-        ColorThemePreset("Matrix", EmeraldGreen, ScannerDarkBg)
+        ColorThemePreset("Classic Black", Color(0xFF000000), Color(0xFFFFFFFF)),
+        ColorThemePreset("Navy Blue", ClassicBlue, Color(0xFFFFFFFF)),
+        ColorThemePreset("Forest Green", ClassicGreen, Color(0xFFFFFFFF)),
+        ColorThemePreset("Dark Contrast", Color(0xFFFFFFFF), Color(0xFF1E293B))
     )
     var selectedPresetIndex by remember { mutableIntStateOf(0) }
     val currentPreset = presets[selectedPresetIndex]
@@ -154,9 +158,8 @@ fun GeneratorScreen(
                 backgroundColor = currentPreset.bgColor.toArgb()
             )
         } else {
-            // Default sample preview
             generatedBitmap = QrCodeGenerator.generateBitmap(
-                content = "https://google.com",
+                content = "https://example.com",
                 size = 512,
                 foregroundColor = currentPreset.fgColor.toArgb(),
                 backgroundColor = currentPreset.bgColor.toArgb()
@@ -167,65 +170,77 @@ fun GeneratorScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(ScannerDarkBg)
+            .background(ClassicBg)
             .verticalScroll(scrollState)
-            .padding(vertical = 16.dp)
+            .padding(vertical = 18.dp)
     ) {
-        // Header
+        // Header (Clear & Friendly for all ages)
         Column(modifier = Modifier.padding(horizontal = 20.dp)) {
             Text(
-                text = "QR GENERATOR",
-                fontSize = 12.sp,
+                text = "CREATE QR CODE",
+                fontSize = 13.sp,
                 fontWeight = FontWeight.Bold,
-                color = NeonCyan,
-                letterSpacing = 1.2.sp
+                color = ClassicBlue,
+                letterSpacing = 1.sp
             )
+            Spacer(modifier = Modifier.height(2.dp))
             Text(
-                text = "Create Custom QR Code",
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Black,
-                color = TextWhite
+                text = "Generate Any QR Code",
+                fontSize = 26.sp,
+                fontWeight = FontWeight.Bold,
+                color = TextDarkPrimary
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = "Choose a type below, fill in the information, and share or print your code.",
+                fontSize = 14.sp,
+                color = TextDarkSecondary,
+                lineHeight = 20.sp
             )
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(18.dp))
 
         // Type Tabs
         ScrollableTabRow(
             selectedTabIndex = selectedTypeIndex,
-            containerColor = ScannerDarkBg,
-            contentColor = NeonCyan,
+            containerColor = ClassicBg,
+            contentColor = ClassicBlue,
             edgePadding = 20.dp,
             indicator = { tabPositions ->
                 TabRowDefaults.SecondaryIndicator(
                     modifier = Modifier.tabIndicatorOffset(tabPositions[selectedTypeIndex]),
-                    color = NeonCyan,
-                    height = 2.dp
+                    color = ClassicBlue,
+                    height = 3.dp
                 )
             },
             divider = {}
         ) {
             types.forEachIndexed { index, type ->
+                val isSelected = selectedTypeIndex == index
                 Tab(
-                    selected = selectedTypeIndex == index,
+                    selected = isSelected,
                     onClick = { selectedTypeIndex = index },
                     text = {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.padding(vertical = 6.dp)
+                        ) {
                             Icon(
                                 imageVector = type.icon,
                                 contentDescription = null,
-                                modifier = Modifier.size(16.dp)
+                                modifier = Modifier.size(18.dp)
                             )
                             Spacer(modifier = Modifier.width(6.dp))
                             Text(
                                 text = type.title.substringBefore(" "),
-                                fontSize = 13.sp,
-                                fontWeight = if (selectedTypeIndex == index) FontWeight.Bold else FontWeight.Medium
+                                fontSize = 14.sp,
+                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
                             )
                         }
                     },
-                    selectedContentColor = NeonCyan,
-                    unselectedContentColor = TextMuted
+                    selectedContentColor = ClassicBlue,
+                    unselectedContentColor = TextDarkMuted
                 )
             }
         }
@@ -237,17 +252,18 @@ fun GeneratorScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 20.dp),
-            shape = RoundedCornerShape(16.dp),
-            colors = CardDefaults.cardColors(containerColor = ScannerSurface),
-            border = CardDefaults.outlinedCardBorder().copy(brush = androidx.compose.ui.graphics.SolidColor(ScannerBorder))
+            shape = RoundedCornerShape(18.dp),
+            colors = CardDefaults.cardColors(containerColor = ClassicSurface),
+            border = CardDefaults.outlinedCardBorder().copy(brush = androidx.compose.ui.graphics.SolidColor(ClassicBorder)),
+            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
         ) {
-            Column(modifier = Modifier.padding(16.dp)) {
+            Column(modifier = Modifier.padding(20.dp)) {
                 when (currentType) {
                     QrType.URL -> {
                         ScannerInputField(
                             value = urlInput,
                             onValueChange = { urlInput = it },
-                            label = "Website URL",
+                            label = "Website Address (URL)",
                             placeholder = "https://example.com"
                         )
                     }
@@ -255,8 +271,8 @@ fun GeneratorScreen(
                         ScannerInputField(
                             value = textInput,
                             onValueChange = { textInput = it },
-                            label = "Text Content",
-                            placeholder = "Enter message or notes",
+                            label = "Text Note or Message",
+                            placeholder = "Enter any message, notes, or instructions",
                             singleLine = false,
                             maxLines = 4
                         )
@@ -265,37 +281,50 @@ fun GeneratorScreen(
                         ScannerInputField(
                             value = wifiSsid,
                             onValueChange = { wifiSsid = it },
-                            label = "Network Name (SSID)",
-                            placeholder = "Home_Wi-Fi"
+                            label = "Wi-Fi Network Name (SSID)",
+                            placeholder = "e.g. Home_Network"
                         )
-                        Spacer(modifier = Modifier.height(10.dp))
+                        Spacer(modifier = Modifier.height(12.dp))
                         ScannerInputField(
                             value = wifiPassword,
                             onValueChange = { wifiPassword = it },
-                            label = "Password",
-                            placeholder = "WPA2 Password"
+                            label = "Wi-Fi Password",
+                            placeholder = "Enter Wi-Fi password"
                         )
-                        Spacer(modifier = Modifier.height(10.dp))
+                        Spacer(modifier = Modifier.height(12.dp))
+                        Text(
+                            text = "Security Type",
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = TextDarkSecondary
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
                         Row(
                             horizontalArrangement = Arrangement.spacedBy(8.dp),
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             listOf("WPA", "WEP", "nopass").forEach { auth ->
+                                val isAuthSelected = wifiAuth == auth
+                                val label = if (auth == "nopass") "No Password" else auth
                                 Box(
                                     modifier = Modifier
                                         .weight(1f)
-                                        .clip(RoundedCornerShape(8.dp))
-                                        .background(if (wifiAuth == auth) NeonCyan.copy(alpha = 0.2f) else ScannerSurfaceVariant)
-                                        .border(1.dp, if (wifiAuth == auth) NeonCyan else ScannerBorder, RoundedCornerShape(8.dp))
+                                        .clip(RoundedCornerShape(10.dp))
+                                        .background(if (isAuthSelected) ClassicBlueContainer else ClassicSurfaceVariant)
+                                        .border(
+                                            1.dp,
+                                            if (isAuthSelected) ClassicBlue else ClassicBorder,
+                                            RoundedCornerShape(10.dp)
+                                        )
                                         .clickable { wifiAuth = auth }
-                                        .padding(vertical = 8.dp),
+                                        .padding(vertical = 10.dp),
                                     contentAlignment = Alignment.Center
                                 ) {
                                     Text(
-                                        text = auth,
-                                        fontSize = 12.sp,
-                                        fontWeight = FontWeight.Bold,
-                                        color = if (wifiAuth == auth) NeonCyan else TextMuted
+                                        text = label,
+                                        fontSize = 13.sp,
+                                        fontWeight = if (isAuthSelected) FontWeight.Bold else FontWeight.Medium,
+                                        color = if (isAuthSelected) ClassicBlue else TextDarkSecondary
                                     )
                                 }
                             }
@@ -306,16 +335,16 @@ fun GeneratorScreen(
                             value = contactName,
                             onValueChange = { contactName = it },
                             label = "Full Name",
-                            placeholder = "John Doe"
+                            placeholder = "e.g. John Smith"
                         )
-                        Spacer(modifier = Modifier.height(10.dp))
+                        Spacer(modifier = Modifier.height(12.dp))
                         ScannerInputField(
                             value = contactPhone,
                             onValueChange = { contactPhone = it },
                             label = "Phone Number",
                             placeholder = "+1 555 123 4567"
                         )
-                        Spacer(modifier = Modifier.height(10.dp))
+                        Spacer(modifier = Modifier.height(12.dp))
                         ScannerInputField(
                             value = contactEmail,
                             onValueChange = { contactEmail = it },
@@ -327,22 +356,22 @@ fun GeneratorScreen(
                         ScannerInputField(
                             value = emailAddress,
                             onValueChange = { emailAddress = it },
-                            label = "Recipient Email",
-                            placeholder = "recipient@domain.com"
+                            label = "Send To (Email Address)",
+                            placeholder = "friend@example.com"
                         )
-                        Spacer(modifier = Modifier.height(10.dp))
+                        Spacer(modifier = Modifier.height(12.dp))
                         ScannerInputField(
                             value = emailSubject,
                             onValueChange = { emailSubject = it },
-                            label = "Subject",
-                            placeholder = "Important meeting"
+                            label = "Email Subject",
+                            placeholder = "Meeting details"
                         )
-                        Spacer(modifier = Modifier.height(10.dp))
+                        Spacer(modifier = Modifier.height(12.dp))
                         ScannerInputField(
                             value = emailBody,
                             onValueChange = { emailBody = it },
-                            label = "Message Body",
-                            placeholder = "Write your message...",
+                            label = "Message Content",
+                            placeholder = "Write your message here...",
                             singleLine = false,
                             maxLines = 3
                         )
@@ -351,7 +380,7 @@ fun GeneratorScreen(
                         ScannerInputField(
                             value = phoneNumber,
                             onValueChange = { phoneNumber = it },
-                            label = "Phone Number",
+                            label = "Phone Number to Call",
                             placeholder = "+1 234 567 8900"
                         )
                     }
@@ -360,7 +389,7 @@ fun GeneratorScreen(
             }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(18.dp))
 
         // Color Theme Presets
         Column(modifier = Modifier.padding(horizontal = 20.dp)) {
@@ -368,15 +397,15 @@ fun GeneratorScreen(
                 Icon(
                     imageVector = Icons.Default.Palette,
                     contentDescription = null,
-                    tint = NeonCyan,
-                    modifier = Modifier.size(16.dp)
+                    tint = ClassicBlue,
+                    modifier = Modifier.size(18.dp)
                 )
-                Spacer(modifier = Modifier.width(6.dp))
+                Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = "QR COLOR STYLE",
-                    fontSize = 11.sp,
+                    text = "QR CODE COLOR STYLE",
+                    fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
-                    color = TextMuted,
+                    color = TextDarkMuted,
                     letterSpacing = 1.sp
                 )
             }
@@ -393,40 +422,40 @@ fun GeneratorScreen(
                         modifier = Modifier
                             .weight(1f)
                             .clip(RoundedCornerShape(12.dp))
-                            .background(ScannerSurface)
+                            .background(ClassicSurface)
                             .border(
-                                width = if (isSelected) 1.5.dp else 1.dp,
-                                color = if (isSelected) NeonCyan else ScannerBorder,
+                                width = if (isSelected) 2.dp else 1.dp,
+                                color = if (isSelected) ClassicBlue else ClassicBorder,
                                 shape = RoundedCornerShape(12.dp)
                             )
                             .clickable { selectedPresetIndex = index }
-                            .padding(8.dp),
+                            .padding(vertical = 10.dp, horizontal = 4.dp),
                         contentAlignment = Alignment.Center
                     ) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Box(
                                 modifier = Modifier
-                                    .size(24.dp)
+                                    .size(26.dp)
                                     .clip(CircleShape)
                                     .background(preset.fgColor)
-                                    .border(1.dp, Color.Gray, CircleShape),
+                                    .border(1.dp, ClassicBorderLight, CircleShape),
                                 contentAlignment = Alignment.Center
                             ) {
                                 if (isSelected) {
                                     Icon(
                                         imageVector = Icons.Default.Check,
                                         contentDescription = null,
-                                        tint = if (preset.fgColor == Color.Black) Color.White else Color.Black,
-                                        modifier = Modifier.size(14.dp)
+                                        tint = if (preset.fgColor == Color.White) Color.Black else Color.White,
+                                        modifier = Modifier.size(16.dp)
                                     )
                                 }
                             }
-                            Spacer(modifier = Modifier.height(4.dp))
+                            Spacer(modifier = Modifier.height(6.dp))
                             Text(
                                 text = preset.name,
                                 fontSize = 11.sp,
-                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
-                                color = if (isSelected) NeonCyan else TextMuted
+                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
+                                color = if (isSelected) ClassicBlue else TextDarkSecondary
                             )
                         }
                     }
@@ -444,13 +473,14 @@ fun GeneratorScreen(
             contentAlignment = Alignment.Center
         ) {
             Card(
-                shape = RoundedCornerShape(18.dp),
+                shape = RoundedCornerShape(20.dp),
                 colors = CardDefaults.cardColors(containerColor = currentPreset.bgColor),
+                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
                 border = CardDefaults.outlinedCardBorder().copy(
-                    brush = androidx.compose.ui.graphics.SolidColor(if (currentPreset.bgColor == ScannerDarkBg) ScannerBorder else Color.LightGray)
+                    brush = androidx.compose.ui.graphics.SolidColor(ClassicBorder)
                 )
             ) {
-                Box(modifier = Modifier.padding(20.dp), contentAlignment = Alignment.Center) {
+                Box(modifier = Modifier.padding(22.dp), contentAlignment = Alignment.Center) {
                     if (generatedBitmap != null) {
                         Image(
                             bitmap = generatedBitmap!!.asImageBitmap(),
@@ -465,9 +495,9 @@ fun GeneratorScreen(
             }
         }
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(22.dp))
 
-        // Action Buttons: Save & Share
+        // Action Buttons: Save & Share (Large, 54dp, High Contrast)
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -482,35 +512,35 @@ fun GeneratorScreen(
                 },
                 modifier = Modifier
                     .weight(1f)
-                    .height(50.dp)
+                    .height(54.dp)
                     .testTag("share_qr_button"),
-                shape = RoundedCornerShape(12.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = NeonCyan, contentColor = Color.Black)
+                shape = RoundedCornerShape(14.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = ClassicBlue, contentColor = TextLight)
             ) {
-                Icon(imageVector = Icons.Default.Share, contentDescription = null, modifier = Modifier.size(18.dp))
-                Spacer(modifier = Modifier.width(6.dp))
-                Text("Share QR", fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                Icon(imageVector = Icons.Default.Share, contentDescription = null, modifier = Modifier.size(20.dp))
+                Spacer(modifier = Modifier.width(8.dp))
+                Text("Share QR", fontSize = 15.sp, fontWeight = FontWeight.Bold)
             }
 
-            Button(
+            OutlinedButton(
                 onClick = {
                     onSaveGenerated(rawPayload, displayTitle, currentType.name)
-                    Toast.makeText(context, "Saved to QR History", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Saved to History", Toast.LENGTH_SHORT).show()
                 },
                 modifier = Modifier
                     .weight(1f)
-                    .height(50.dp)
+                    .height(54.dp)
                     .testTag("save_qr_button"),
-                shape = RoundedCornerShape(12.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = ScannerSurfaceVariant, contentColor = TextWhite)
+                shape = RoundedCornerShape(14.dp),
+                colors = ButtonDefaults.outlinedButtonColors(contentColor = ClassicBlue)
             ) {
-                Icon(imageVector = Icons.Default.BookmarkAdd, contentDescription = null, modifier = Modifier.size(18.dp))
-                Spacer(modifier = Modifier.width(6.dp))
-                Text("Save Code", fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
+                Icon(imageVector = Icons.Default.BookmarkAdd, contentDescription = null, modifier = Modifier.size(20.dp))
+                Spacer(modifier = Modifier.width(8.dp))
+                Text("Save Code", fontSize = 15.sp, fontWeight = FontWeight.Bold)
             }
         }
 
-        Spacer(modifier = Modifier.height(30.dp))
+        Spacer(modifier = Modifier.height(32.dp))
     }
 }
 
@@ -526,19 +556,19 @@ fun ScannerInputField(
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
-        label = { Text(label, fontSize = 13.sp, color = TextMuted) },
-        placeholder = { Text(placeholder, fontSize = 13.sp, color = TextMuted.copy(alpha = 0.5f)) },
+        label = { Text(label, fontSize = 14.sp, color = TextDarkSecondary) },
+        placeholder = { Text(placeholder, fontSize = 14.sp, color = TextDarkMuted.copy(alpha = 0.7f)) },
         singleLine = singleLine,
         maxLines = maxLines,
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
         colors = OutlinedTextFieldDefaults.colors(
-            focusedBorderColor = NeonCyan,
-            unfocusedBorderColor = ScannerBorder,
-            focusedContainerColor = ScannerSurfaceVariant,
-            unfocusedContainerColor = ScannerSurfaceVariant,
-            focusedTextColor = TextWhite,
-            unfocusedTextColor = TextWhite
+            focusedBorderColor = ClassicBlue,
+            unfocusedBorderColor = ClassicBorder,
+            focusedContainerColor = ClassicSurfaceVariant,
+            unfocusedContainerColor = ClassicSurfaceVariant,
+            focusedTextColor = TextDarkPrimary,
+            unfocusedTextColor = TextDarkPrimary
         )
     )
 }

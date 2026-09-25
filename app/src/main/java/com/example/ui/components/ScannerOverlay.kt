@@ -30,16 +30,16 @@ import androidx.compose.material.icons.filled.FlashOn
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
@@ -51,13 +51,11 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.ui.theme.EmeraldGreen
-import com.example.ui.theme.LaserColor
-import com.example.ui.theme.LaserGlow
-import com.example.ui.theme.NeonCyan
-import com.example.ui.theme.ScannerSurface
-import com.example.ui.theme.TextMuted
-import com.example.ui.theme.TextWhite
+import com.example.ui.theme.ClassicBlue
+import com.example.ui.theme.ClassicBlueContainer
+import com.example.ui.theme.LaserBeam
+import com.example.ui.theme.LaserBeamGlow
+import com.example.ui.theme.TextDarkPrimary
 
 @Composable
 fun ScannerOverlay(
@@ -79,7 +77,7 @@ fun ScannerOverlay(
     )
 
     Box(modifier = modifier.fillMaxSize()) {
-        // Darkened vignette canvas with clear center cutout + animated laser + corner brackets
+        // Vignette with clear center cutout + animated laser + corner brackets
         Canvas(modifier = Modifier.fillMaxSize()) {
             val canvasWidth = size.width
             val canvasHeight = size.height
@@ -91,7 +89,7 @@ fun ScannerOverlay(
             val bottom = top + boxSize
 
             // Outer darkened mask
-            val scrimColor = Color(0x99070A10)
+            val scrimColor = Color(0x8A000000)
             drawRect(color = scrimColor)
 
             // Punch out reticle using BlendMode.Clear
@@ -105,17 +103,17 @@ fun ScannerOverlay(
 
             // Inner subtle border
             drawRoundRect(
-                color = Color(0x3300E5FF),
+                color = Color.White.copy(alpha = 0.6f),
                 topLeft = Offset(left, top),
                 size = Size(boxSize, boxSize),
                 cornerRadius = CornerRadius(20.dp.toPx()),
-                style = Stroke(width = 1.5.dp.toPx())
+                style = Stroke(width = 2.dp.toPx())
             )
 
-            // Corner brackets
-            val cornerLength = 32.dp.toPx()
-            val cornerStroke = 4.dp.toPx()
-            val cornerColor = NeonCyan
+            // Corner brackets in classic bold blue
+            val cornerLength = 34.dp.toPx()
+            val cornerStroke = 5.dp.toPx()
+            val cornerColor = ClassicBlue
             val cornerRadius = 14.dp.toPx()
 
             // Top-Left
@@ -154,18 +152,17 @@ fun ScannerOverlay(
             }
             drawPath(brPath, cornerColor, style = Stroke(width = cornerStroke))
 
-            // Animated Laser Line with gradient glow
+            // Animated Laser Line with gentle blue glow
             val laserY = top + (bottom - top) * laserProgress
             val laserPadding = 12.dp.toPx()
 
-            // Glow brush
             drawRect(
                 brush = Brush.verticalGradient(
                     colors = listOf(
                         Color.Transparent,
-                        LaserGlow,
-                        LaserColor,
-                        LaserGlow,
+                        LaserBeamGlow,
+                        LaserBeam,
+                        LaserBeamGlow,
                         Color.Transparent
                     ),
                     startY = laserY - 12.dp.toPx(),
@@ -184,38 +181,41 @@ fun ScannerOverlay(
             )
         }
 
-        // Top Header
+        // Top Header - High contrast white pill badge
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 28.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Box(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(20.dp))
-                    .background(Color(0xCC131926))
-                    .padding(horizontal = 16.dp, vertical = 8.dp)
+            Surface(
+                shape = RoundedCornerShape(24.dp),
+                color = Color.White,
+                shadowElevation = 6.dp,
+                modifier = Modifier.padding(horizontal = 16.dp)
             ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
+                Row(
+                    modifier = Modifier.padding(horizontal = 18.dp, vertical = 10.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     Icon(
                         imageVector = Icons.Default.QrCodeScanner,
                         contentDescription = null,
-                        tint = NeonCyan,
-                        modifier = Modifier.size(18.dp)
+                        tint = ClassicBlue,
+                        modifier = Modifier.size(20.dp)
                     )
-                    Spacer(modifier = Modifier.width(8.dp))
+                    Spacer(modifier = Modifier.width(10.dp))
                     Text(
                         text = "Point camera at any QR code",
-                        color = TextWhite,
-                        fontSize = 13.sp,
-                        fontWeight = FontWeight.SemiBold
+                        color = TextDarkPrimary,
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.Bold
                     )
                 }
             }
         }
 
-        // Bottom Controls Bar
+        // Bottom Controls Bar - Large, friendly touch buttons
         Row(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
@@ -226,7 +226,7 @@ fun ScannerOverlay(
         ) {
             ScannerControlButton(
                 icon = if (isTorchOn) Icons.Default.FlashOn else Icons.Default.FlashOff,
-                label = if (isTorchOn) "Torch On" else "Torch",
+                label = if (isTorchOn) "Flash On" else "Flashlight",
                 isActive = isTorchOn,
                 onClick = onToggleTorch,
                 testTag = "torch_button"
@@ -234,7 +234,7 @@ fun ScannerOverlay(
 
             ScannerControlButton(
                 icon = Icons.Default.Image,
-                label = "Gallery",
+                label = "Photos",
                 isActive = false,
                 onClick = onPickImage,
                 testTag = "gallery_button"
@@ -265,12 +265,13 @@ fun ScannerControlButton(
     ) {
         Box(
             modifier = Modifier
-                .size(54.dp)
+                .size(60.dp)
+                .shadow(6.dp, CircleShape)
                 .clip(CircleShape)
-                .background(if (isActive) NeonCyan.copy(alpha = 0.25f) else Color(0xCC1A2333))
+                .background(if (isActive) ClassicBlue else Color.White)
                 .border(
-                    width = 1.5.dp,
-                    color = if (isActive) NeonCyan else Color(0x4D3B4B70),
+                    width = 2.dp,
+                    color = if (isActive) ClassicBlue else Color(0xFFE2E8F0),
                     shape = CircleShape
                 )
                 .testTag(testTag),
@@ -279,16 +280,16 @@ fun ScannerControlButton(
             Icon(
                 imageVector = icon,
                 contentDescription = label,
-                tint = if (isActive) NeonCyan else TextWhite,
-                modifier = Modifier.size(24.dp)
+                tint = if (isActive) Color.White else ClassicBlue,
+                modifier = Modifier.size(28.dp)
             )
         }
-        Spacer(modifier = Modifier.height(6.dp))
+        Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = label,
-            fontSize = 12.sp,
-            fontWeight = FontWeight.Medium,
-            color = if (isActive) NeonCyan else TextMuted
+            fontSize = 13.sp,
+            fontWeight = FontWeight.SemiBold,
+            color = Color.White
         )
     }
 }

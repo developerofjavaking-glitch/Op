@@ -6,12 +6,12 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import com.example.ui.QrMainScreen
 import com.example.ui.QrViewModel
 import com.example.ui.theme.MyApplicationTheme
-import com.example.ui.theme.ScannerDarkBg
 
 class MainActivity : ComponentActivity() {
 
@@ -24,7 +24,7 @@ class MainActivity : ComponentActivity() {
             MyApplicationTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color = ScannerDarkBg
+                    color = MaterialTheme.colorScheme.background
                 ) {
                     QrMainScreen(viewModel = viewModel)
                 }

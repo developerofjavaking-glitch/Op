@@ -2,28 +2,56 @@ package com.example.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-// Scanner Cyberpunk & Modern Dark Theme
-val ScannerDarkBg = Color(0xFF090D16)
-val ScannerSurface = Color(0xFF131926)
-val ScannerSurfaceVariant = Color(0xFF1C2436)
-val ScannerBorder = Color(0xFF28334D)
-val ScannerBorderLight = Color(0xFF3B4B70)
+// Classic Light Mode Canvas & Surfaces
+val ClassicBg = Color(0xFFF8FAFC)              // Soft warm light slate background
+val ClassicSurface = Color(0xFFFFFFFF)         // Clean pure white surface
+val ClassicSurfaceVariant = Color(0xFFF1F5F9)  // Secondary surface for inputs & chips
+val ClassicBorder = Color(0xFFE2E8F0)          // Soft clean border
+val ClassicBorderLight = Color(0xFFCBD5E1)     // Crisp stroke border
 
-// Neon Accents
-val NeonCyan = Color(0xFF00E5FF)
-val NeonCyanGlow = Color(0x3300E5FF)
-val NeonPurple = Color(0xFFB388FF)
-val ElectricViolet = Color(0xFF7C4DFF)
-val EmeraldGreen = Color(0xFF00E676)
-val EmeraldGlow = Color(0x3300E676)
-val AmberWarning = Color(0xFFFFB300)
-val CoralRed = Color(0xFFFF5252)
+// Classic Brand Primaries & Semantic Accents
+val ClassicBlue = Color(0xFF1A56DB)            // Timeless royal sapphire blue (primary)
+val ClassicBlueHover = Color(0xFF1E429F)
+val ClassicBlueContainer = Color(0xFFEBF5FF)   // Soft friendly container
+val ClassicBlueText = Color(0xFF1E40AF)
 
-// Text Colors
-val TextWhite = Color(0xFFFFFFFF)
-val TextMuted = Color(0xFF90A0B7)
-val TextSubtle = Color(0xFF5E6E85)
+val ClassicGreen = Color(0xFF059669)           // Forest green (Wi-Fi, dial, success)
+val ClassicGreenContainer = Color(0xFFDEF7EC)
+val ClassicGreenText = Color(0xFF03543F)
 
-// Laser Line
-val LaserColor = Color(0xFF00E5FF)
-val LaserGlow = Color(0x8000E5FF)
+val ClassicPurple = Color(0xFF7E3AF2)          // Royal purple (contacts)
+val ClassicPurpleContainer = Color(0xFFEDEBFE)
+
+val ClassicAmber = Color(0xFFD97706)           // Warm gold/amber (bookmarks, favorites)
+val ClassicAmberContainer = Color(0xFFFEF3C7)
+
+val ClassicRed = Color(0xFFE02424)             // Classic crimson red (delete, clear)
+val ClassicRedContainer = Color(0xFFFDE8E8)
+
+// Text Colors (High Contrast for all ages - Senior & Kid Friendly)
+val TextDarkPrimary = Color(0xFF0F172A)        // Deep slate charcoal (high contrast)
+val TextDarkSecondary = Color(0xFF334155)      // Rich slate secondary
+val TextDarkMuted = Color(0xFF64748B)          // Muted labels and hints
+val TextLight = Color(0xFFFFFFFF)              // For dark buttons
+
+// Reticle & Scanner Overlay (over live camera preview)
+val OverlayScrim = Color(0x99000000)
+val ViewfinderReticle = Color(0xFF1A56DB)
+val LaserBeam = Color(0xFF2563EB)
+val LaserBeamGlow = Color(0x663B82F6)
+
+// Compatibility aliases for legacy references if any
+val ScannerDarkBg = ClassicBg
+val ScannerSurface = ClassicSurface
+val ScannerSurfaceVariant = ClassicSurfaceVariant
+val ScannerBorder = ClassicBorder
+val ScannerBorderLight = ClassicBorderLight
+val NeonCyan = ClassicBlue
+val TextWhite = TextLight
+val TextMuted = TextDarkMuted
+val TextSubtle = TextDarkSecondary
+val EmeraldGreen = ClassicGreen
+val ElectricViolet = ClassicPurple
+val NeonPurple = ClassicPurple
+val LaserColor = LaserBeam
+val LaserGlow = LaserBeamGlow

@@ -24,11 +24,12 @@ import androidx.compose.material.icons.filled.BookmarkBorder
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.DeleteSweep
 import androidx.compose.material.icons.filled.History
-import androidx.compose.material.icons.filled.QrCode
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
@@ -50,14 +51,18 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.data.db.QrRecordEntity
 import com.example.data.model.QrType
-import com.example.ui.theme.NeonCyan
-import com.example.ui.theme.ScannerBorder
-import com.example.ui.theme.ScannerDarkBg
-import com.example.ui.theme.ScannerSurface
-import com.example.ui.theme.ScannerSurfaceVariant
-import com.example.ui.theme.TextMuted
-import com.example.ui.theme.TextSubtle
-import com.example.ui.theme.TextWhite
+import com.example.ui.theme.ClassicAmber
+import com.example.ui.theme.ClassicBg
+import com.example.ui.theme.ClassicBlue
+import com.example.ui.theme.ClassicBlueContainer
+import com.example.ui.theme.ClassicBorder
+import com.example.ui.theme.ClassicRed
+import com.example.ui.theme.ClassicSurface
+import com.example.ui.theme.ClassicSurfaceVariant
+import com.example.ui.theme.TextDarkMuted
+import com.example.ui.theme.TextDarkPrimary
+import com.example.ui.theme.TextDarkSecondary
+import com.example.ui.theme.TextLight
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -94,8 +99,8 @@ fun HistoryScreen(
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
-            .background(ScannerDarkBg)
-            .padding(horizontal = 20.dp, vertical = 16.dp)
+            .background(ClassicBg)
+            .padding(horizontal = 20.dp, vertical = 18.dp)
     ) {
         item {
             // Header
@@ -106,17 +111,18 @@ fun HistoryScreen(
             ) {
                 Column {
                     Text(
-                        text = "SAVED ARCHIVE",
-                        fontSize = 12.sp,
+                        text = "SAVED CODES",
+                        fontSize = 13.sp,
                         fontWeight = FontWeight.Bold,
-                        color = NeonCyan,
-                        letterSpacing = 1.2.sp
+                        color = ClassicBlue,
+                        letterSpacing = 1.sp
                     )
+                    Spacer(modifier = Modifier.height(2.dp))
                     Text(
                         text = "History & Bookmarks",
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.Black,
-                        color = TextWhite
+                        fontSize = 26.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = TextDarkPrimary
                     )
                 }
 
@@ -127,8 +133,9 @@ fun HistoryScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Default.DeleteSweep,
-                            contentDescription = "Clear History",
-                            tint = TextMuted
+                            contentDescription = "Clear All History",
+                            tint = ClassicRed,
+                            modifier = Modifier.size(26.dp)
                         )
                     }
                 }
@@ -136,30 +143,30 @@ fun HistoryScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Search bar
+            // Search Bar (Large, clean, high contrast)
             OutlinedTextField(
                 value = searchQuery,
                 onValueChange = { searchQuery = it },
-                placeholder = { Text("Search by title, url, or content...", fontSize = 13.sp, color = TextMuted) },
+                placeholder = { Text("Search by name, link, or text...", fontSize = 14.sp, color = TextDarkMuted) },
                 leadingIcon = {
-                    Icon(imageVector = Icons.Default.Search, contentDescription = null, tint = TextMuted, modifier = Modifier.size(18.dp))
+                    Icon(imageVector = Icons.Default.Search, contentDescription = null, tint = ClassicBlue, modifier = Modifier.size(20.dp))
                 },
                 singleLine = true,
                 modifier = Modifier
                     .fillMaxWidth()
                     .testTag("history_search_field"),
-                shape = RoundedCornerShape(12.dp),
+                shape = RoundedCornerShape(14.dp),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = NeonCyan,
-                    unfocusedBorderColor = ScannerBorder,
-                    focusedContainerColor = ScannerSurface,
-                    unfocusedContainerColor = ScannerSurface,
-                    focusedTextColor = TextWhite,
-                    unfocusedTextColor = TextWhite
+                    focusedBorderColor = ClassicBlue,
+                    unfocusedBorderColor = ClassicBorder,
+                    focusedContainerColor = ClassicSurface,
+                    unfocusedContainerColor = ClassicSurface,
+                    focusedTextColor = TextDarkPrimary,
+                    unfocusedTextColor = TextDarkPrimary
                 )
             )
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(14.dp))
 
             // Filter Chips
             Row(
@@ -184,24 +191,32 @@ fun HistoryScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Icon(
-                            imageVector = Icons.Default.History,
-                            contentDescription = null,
-                            tint = TextSubtle,
-                            modifier = Modifier.size(54.dp)
-                        )
-                        Spacer(modifier = Modifier.height(12.dp))
+                        Box(
+                            modifier = Modifier
+                                .size(72.dp)
+                                .clip(CircleShape)
+                                .background(ClassicBlueContainer),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.History,
+                                contentDescription = null,
+                                tint = ClassicBlue,
+                                modifier = Modifier.size(36.dp)
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(16.dp))
                         Text(
-                            text = if (searchQuery.isNotBlank()) "No records matching query" else "No saved QR codes yet",
-                            fontSize = 15.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            color = TextMuted
+                            text = if (searchQuery.isNotBlank()) "No records matching your search" else "No saved QR codes yet",
+                            fontSize = 17.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = TextDarkPrimary
                         )
-                        Spacer(modifier = Modifier.height(4.dp))
+                        Spacer(modifier = Modifier.height(6.dp))
                         Text(
-                            text = "Scanned and created codes will appear here",
-                            fontSize = 12.sp,
-                            color = TextSubtle
+                            text = "Codes you scan or generate will appear here automatically",
+                            fontSize = 14.sp,
+                            color = TextDarkSecondary
                         )
                     }
                 }
@@ -214,38 +229,39 @@ fun HistoryScreen(
                     onToggleFavorite = { onToggleFavorite(record.id, !record.isFavorite) },
                     onDelete = { onDeleteRecord(record.id) }
                 )
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(12.dp))
             }
         }
 
         item {
-            Spacer(modifier = Modifier.height(28.dp))
+            Spacer(modifier = Modifier.height(32.dp))
         }
     }
 
     if (showClearConfirmDialog) {
         AlertDialog(
             onDismissRequest = { showClearConfirmDialog = false },
-            title = { Text("Clear All History?", color = TextWhite, fontWeight = FontWeight.Bold) },
-            text = { Text("Are you sure you want to permanently delete all saved and scanned QR codes?", color = TextMuted) },
+            title = { Text("Clear All History?", color = TextDarkPrimary, fontWeight = FontWeight.Bold, fontSize = 20.sp) },
+            text = { Text("Are you sure you want to permanently delete all saved and scanned QR codes?", color = TextDarkSecondary, fontSize = 15.sp) },
             confirmButton = {
                 Button(
                     onClick = {
                         onClearAll()
                         showClearConfirmDialog = false
                     },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF5252))
+                    colors = ButtonDefaults.buttonColors(containerColor = ClassicRed, contentColor = TextLight),
+                    shape = RoundedCornerShape(10.dp)
                 ) {
-                    Text("Clear All", color = Color.White)
+                    Text("Clear All", fontWeight = FontWeight.Bold)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showClearConfirmDialog = false }) {
-                    Text("Cancel", color = TextMuted)
+                    Text("Cancel", color = TextDarkSecondary, fontWeight = FontWeight.SemiBold)
                 }
             },
-            containerColor = ScannerSurface,
-            shape = RoundedCornerShape(16.dp)
+            containerColor = ClassicSurface,
+            shape = RoundedCornerShape(18.dp)
         )
     }
 }
@@ -260,16 +276,20 @@ fun HistoryFilterPill(
     Box(
         modifier = Modifier
             .clip(RoundedCornerShape(20.dp))
-            .background(if (isSelected) NeonCyan.copy(alpha = 0.2f) else ScannerSurface)
-            .border(1.dp, if (isSelected) NeonCyan else ScannerBorder, RoundedCornerShape(20.dp))
+            .background(if (isSelected) ClassicBlueContainer else ClassicSurface)
+            .border(
+                1.5.dp,
+                if (isSelected) ClassicBlue else ClassicBorder,
+                RoundedCornerShape(20.dp)
+            )
             .clickable(onClick = onClick)
-            .padding(horizontal = 12.dp, vertical = 6.dp)
+            .padding(horizontal = 14.dp, vertical = 8.dp)
     ) {
         Text(
             text = label,
-            fontSize = 12.sp,
+            fontSize = 13.sp,
             fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
-            color = if (isSelected) NeonCyan else TextMuted
+            color = if (isSelected) ClassicBlue else TextDarkSecondary
         )
     }
 }
@@ -289,81 +309,85 @@ fun HistoryItemCard(
         }
     }
 
-    val dateFormat = remember { SimpleDateFormat("MMM d, HH:mm", Locale.getDefault()) }
+    val dateFormat = remember { SimpleDateFormat("MMM d, yyyy • h:mm a", Locale.getDefault()) }
     val dateStr = remember(record.timestamp) { dateFormat.format(Date(record.timestamp)) }
 
-    Box(
+    Card(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(14.dp))
-            .background(ScannerSurface)
-            .border(1.dp, ScannerBorder, RoundedCornerShape(14.dp))
-            .clickable(onClick = onClick)
-            .padding(12.dp)
+            .clip(RoundedCornerShape(16.dp))
+            .clickable(onClick = onClick),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = ClassicSurface),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        border = CardDefaults.outlinedCardBorder().copy(brush = androidx.compose.ui.graphics.SolidColor(ClassicBorder))
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(14.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Box(
                 modifier = Modifier
-                    .size(42.dp)
+                    .size(46.dp)
                     .clip(CircleShape)
-                    .background(qrType.color.copy(alpha = 0.15f)),
+                    .background(qrType.color.copy(alpha = 0.12f)),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
                     imageVector = qrType.icon,
                     contentDescription = null,
                     tint = qrType.color,
-                    modifier = Modifier.size(20.dp)
+                    modifier = Modifier.size(24.dp)
                 )
             }
 
-            Spacer(modifier = Modifier.width(12.dp))
+            Spacer(modifier = Modifier.width(14.dp))
 
             Column(modifier = Modifier.weight(1f)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
                         text = record.title,
-                        fontSize = 14.sp,
+                        fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
-                        color = TextWhite,
-                        maxLines = 1
+                        color = TextDarkPrimary,
+                        maxLines = 1,
+                        modifier = Modifier.weight(1f, fill = false)
                     )
                     if (record.isGenerated) {
                         Spacer(modifier = Modifier.width(6.dp))
                         Box(
                             modifier = Modifier
-                                .clip(RoundedCornerShape(4.dp))
-                                .background(ScannerSurfaceVariant)
-                                .padding(horizontal = 4.dp, vertical = 1.dp)
+                                .clip(RoundedCornerShape(6.dp))
+                                .background(ClassicBlueContainer)
+                                .padding(horizontal = 6.dp, vertical = 2.dp)
                         ) {
-                            Text("Created", fontSize = 9.sp, color = NeonCyan, fontWeight = FontWeight.Bold)
+                            Text("Created", fontSize = 10.sp, color = ClassicBlue, fontWeight = FontWeight.Bold)
                         }
                     }
                 }
-                Spacer(modifier = Modifier.height(2.dp))
+                Spacer(modifier = Modifier.height(3.dp))
                 Text(
                     text = record.subtitle,
-                    fontSize = 12.sp,
-                    color = TextMuted,
+                    fontSize = 13.sp,
+                    color = TextDarkSecondary,
                     maxLines = 1
                 )
-                Spacer(modifier = Modifier.height(2.dp))
+                Spacer(modifier = Modifier.height(3.dp))
                 Text(
                     text = dateStr,
-                    fontSize = 10.sp,
-                    color = TextSubtle
+                    fontSize = 11.sp,
+                    color = TextDarkMuted
                 )
             }
 
             IconButton(onClick = onToggleFavorite) {
                 Icon(
                     imageVector = if (record.isFavorite) Icons.Default.Bookmark else Icons.Default.BookmarkBorder,
-                    contentDescription = "Favorite",
-                    tint = if (record.isFavorite) NeonCyan else TextSubtle,
-                    modifier = Modifier.size(20.dp)
+                    contentDescription = "Save to favorites",
+                    tint = if (record.isFavorite) ClassicAmber else TextDarkMuted,
+                    modifier = Modifier.size(24.dp)
                 )
             }
 
@@ -371,8 +395,8 @@ fun HistoryItemCard(
                 Icon(
                     imageVector = Icons.Default.Delete,
                     contentDescription = "Delete",
-                    tint = TextSubtle,
-                    modifier = Modifier.size(20.dp)
+                    tint = TextDarkMuted,
+                    modifier = Modifier.size(22.dp)
                 )
             }
         }

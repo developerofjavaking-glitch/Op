@@ -18,6 +18,7 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,14 +32,14 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CameraAlt
-import androidx.compose.material.icons.filled.Security
+import androidx.compose.material.icons.filled.PhotoLibrary
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -59,14 +60,17 @@ import androidx.core.content.ContextCompat
 import com.example.data.model.ParsedQrResult
 import com.example.ui.components.ScanResultSheet
 import com.example.ui.components.ScannerOverlay
-import com.example.ui.theme.NeonCyan
-import com.example.ui.theme.ScannerDarkBg
-import com.example.ui.theme.ScannerSurfaceVariant
-import com.example.ui.theme.TextMuted
-import com.example.ui.theme.TextWhite
+import com.example.ui.theme.ClassicBg
+import com.example.ui.theme.ClassicBlue
+import com.example.ui.theme.ClassicBlueContainer
+import com.example.ui.theme.ClassicBorder
+import com.example.ui.theme.ClassicSurface
+import com.example.ui.theme.TextDarkMuted
+import com.example.ui.theme.TextDarkPrimary
+import com.example.ui.theme.TextDarkSecondary
+import com.example.ui.theme.TextLight
 import com.example.util.ImageQrDecoder
 import com.example.util.QrImageAnalyzer
-import androidx.compose.material3.ExperimentalMaterial3Api
 import java.util.concurrent.Executors
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -110,7 +114,7 @@ fun ScannerScreen(
                 triggerVibration(context)
                 onQrDetected(decoded)
             } else {
-                Toast.makeText(context, "No QR code found in selected image", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, "No QR code found in selected photo", Toast.LENGTH_LONG).show()
             }
         }
     }
@@ -122,7 +126,7 @@ fun ScannerScreen(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(ScannerDarkBg)
+            .background(Color.Black)
     ) {
         if (hasCameraPermission) {
             // CameraX Viewfinder
@@ -149,7 +153,6 @@ fun ScannerScreen(
                                 it.setAnalyzer(
                                     cameraExecutor,
                                     QrImageAnalyzer { detectedText ->
-                                        // Only trigger if no sheet is currently displayed
                                         if (currentResult == null) {
                                             triggerVibration(ctx)
                                             onQrDetected(detectedText)
@@ -175,7 +178,6 @@ fun ScannerScreen(
                     previewView
                 },
                 update = {
-                    // Update camera when selector changes
                     val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
                     val cameraExecutor = Executors.newSingleThreadExecutor()
                     cameraProviderFuture.addListener({
@@ -210,7 +212,7 @@ fun ScannerScreen(
                 modifier = Modifier.fillMaxSize()
             )
 
-            // High-tech holographic overlay
+            // Classic Scanner Overlay
             ScannerOverlay(
                 isTorchOn = isTorchOn,
                 onToggleTorch = {
@@ -233,17 +235,23 @@ fun ScannerScreen(
                 }
             )
         } else {
-            // Permission request rationale UI
-            PermissionRationaleUI(
-                onRequestPermission = {
-                    permissionLauncher.launch(Manifest.permission.CAMERA)
-                },
-                onPickImage = {
-                    photoPickerLauncher.launch(
-                        PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-                    )
-                }
-            )
+            // Friendly Classic Permission Rationale UI (All-age clear text & big buttons)
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(ClassicBg)
+            ) {
+                PermissionRationaleUI(
+                    onRequestPermission = {
+                        permissionLauncher.launch(Manifest.permission.CAMERA)
+                    },
+                    onPickImage = {
+                        photoPickerLauncher.launch(
+                            PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                        )
+                    }
+                )
+            }
         }
 
         // Display Result Sheet if QR code detected
@@ -266,71 +274,75 @@ fun PermissionRationaleUI(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(32.dp),
+            .padding(horizontal = 28.dp, vertical = 32.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
         Box(
             modifier = Modifier
-                .size(90.dp)
+                .size(96.dp)
                 .clip(CircleShape)
-                .background(ScannerSurfaceVariant),
+                .background(ClassicBlueContainer),
             contentAlignment = Alignment.Center
         ) {
             Icon(
                 imageVector = Icons.Default.CameraAlt,
                 contentDescription = null,
-                tint = NeonCyan,
-                modifier = Modifier.size(44.dp)
+                tint = ClassicBlue,
+                modifier = Modifier.size(48.dp)
             )
         }
 
         Spacer(modifier = Modifier.height(24.dp))
 
         Text(
-            text = "Camera Access Required",
-            fontSize = 22.sp,
+            text = "Camera Permission",
+            fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
-            color = TextWhite,
+            color = TextDarkPrimary,
             textAlign = TextAlign.Center
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(10.dp))
 
         Text(
-            text = "QR Scanner uses the camera to scan codes in real-time. You can also scan stored QR codes directly from your photo gallery.",
-            fontSize = 14.sp,
-            color = TextMuted,
+            text = "To scan QR codes in real-time, please allow camera access. It is safe and only used while scanning.",
+            fontSize = 16.sp,
+            color = TextDarkSecondary,
             textAlign = TextAlign.Center,
-            lineHeight = 20.sp
+            lineHeight = 24.sp
         )
 
-        Spacer(modifier = Modifier.height(28.dp))
+        Spacer(modifier = Modifier.height(32.dp))
 
         Button(
             onClick = onRequestPermission,
-            colors = ButtonDefaults.buttonColors(containerColor = NeonCyan, contentColor = Color.Black),
-            shape = RoundedCornerShape(12.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = ClassicBlue, contentColor = TextLight),
+            shape = RoundedCornerShape(14.dp),
             modifier = Modifier
                 .fillMaxWidth()
-                .height(50.dp)
+                .height(54.dp)
                 .testTag("enable_camera_button")
         ) {
-            Text("Enable Camera", fontWeight = FontWeight.Bold, fontSize = 15.sp)
+            Icon(imageVector = Icons.Default.CameraAlt, contentDescription = null, modifier = Modifier.size(20.dp))
+            Spacer(modifier = Modifier.size(8.dp))
+            Text("Allow Camera Access", fontWeight = FontWeight.Bold, fontSize = 16.sp)
         }
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(14.dp))
 
-        Button(
+        OutlinedButton(
             onClick = onPickImage,
-            colors = ButtonDefaults.buttonColors(containerColor = ScannerSurfaceVariant, contentColor = TextWhite),
-            shape = RoundedCornerShape(12.dp),
+            shape = RoundedCornerShape(14.dp),
+            colors = ButtonDefaults.outlinedButtonColors(contentColor = ClassicBlue),
             modifier = Modifier
                 .fillMaxWidth()
-                .height(48.dp)
+                .height(52.dp)
                 .testTag("pick_from_gallery_button")
         ) {
-            Text("Scan From Gallery Instead", fontWeight = FontWeight.Medium, fontSize = 14.sp)
+            Icon(imageVector = Icons.Default.PhotoLibrary, contentDescription = null, modifier = Modifier.size(20.dp))
+            Spacer(modifier = Modifier.size(8.dp))
+            Text("Scan From Photos Instead", fontWeight = FontWeight.SemiBold, fontSize = 15.sp)
         }
     }
 }

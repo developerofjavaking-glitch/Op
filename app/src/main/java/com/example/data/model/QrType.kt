@@ -11,10 +11,9 @@ import androidx.compose.material.icons.filled.TextFields
 import androidx.compose.material.icons.filled.Wifi
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import com.example.ui.theme.ElectricViolet
-import com.example.ui.theme.EmeraldGreen
-import com.example.ui.theme.NeonCyan
-import com.example.ui.theme.NeonPurple
+import com.example.ui.theme.ClassicBlue
+import com.example.ui.theme.ClassicGreen
+import com.example.ui.theme.ClassicPurple
 
 enum class QrType(
     val title: String,
@@ -22,12 +21,12 @@ enum class QrType(
     val color: Color,
     val actionLabel: String
 ) {
-    URL("Website URL", Icons.Default.Language, NeonCyan, "Open Website"),
-    WIFI("Wi-Fi Network", Icons.Default.Wifi, EmeraldGreen, "Connect / Copy"),
-    CONTACT("Contact Card", Icons.Default.Person, NeonPurple, "Add Contact"),
-    EMAIL("Email Address", Icons.Default.Email, ElectricViolet, "Send Email"),
-    PHONE("Phone Number", Icons.Default.Phone, EmeraldGreen, "Call Number"),
-    SMS("SMS Message", Icons.Default.Message, NeonCyan, "Send SMS"),
-    GEO("Location Coordinates", Icons.Default.LocationOn, Color(0xFFFF7043), "Open Maps"),
-    TEXT("Text Content", Icons.Default.TextFields, Color(0xFFB0BEC5), "Copy Text")
+    URL("Website Link", Icons.Default.Language, ClassicBlue, "Open Website"),
+    WIFI("Wi-Fi Network", Icons.Default.Wifi, ClassicGreen, "Connect to Wi-Fi"),
+    CONTACT("Contact Card", Icons.Default.Person, ClassicPurple, "Save Contact"),
+    EMAIL("Email Address", Icons.Default.Email, Color(0xFF0284C7), "Send Email"),
+    PHONE("Phone Call", Icons.Default.Phone, ClassicGreen, "Call Number"),
+    SMS("Text Message (SMS)", Icons.Default.Message, ClassicBlue, "Send Message"),
+    GEO("Map Location", Icons.Default.LocationOn, Color(0xFFEA580C), "Open Maps"),
+    TEXT("Plain Text", Icons.Default.TextFields, Color(0xFF475569), "Copy Text")
 }

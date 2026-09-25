@@ -17,6 +17,7 @@ import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material.icons.outlined.History
 import androidx.compose.material.icons.outlined.QrCode
 import androidx.compose.material.icons.outlined.QrCodeScanner
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -29,7 +30,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
@@ -39,11 +39,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.ui.screens.GeneratorScreen
 import com.example.ui.screens.HistoryScreen
 import com.example.ui.screens.ScannerScreen
-import com.example.ui.theme.NeonCyan
-import com.example.ui.theme.ScannerDarkBg
-import com.example.ui.theme.ScannerSurface
-import com.example.ui.theme.TextMuted
-import com.example.ui.theme.TextWhite
+import com.example.ui.theme.ClassicBg
+import com.example.ui.theme.ClassicBlue
+import com.example.ui.theme.ClassicBlueContainer
+import com.example.ui.theme.ClassicBorder
+import com.example.ui.theme.ClassicSurface
+import com.example.ui.theme.TextDarkMuted
 
 enum class QrNavigationTab(
     val title: String,
@@ -53,7 +54,7 @@ enum class QrNavigationTab(
 ) {
     SCAN("Scan", Icons.Filled.QrCodeScanner, Icons.Outlined.QrCodeScanner, "tab_scan"),
     CREATE("Create", Icons.Filled.QrCode, Icons.Outlined.QrCode, "tab_create"),
-    HISTORY("History", Icons.Filled.History, Icons.Outlined.History, "tab_history")
+    HISTORY("Saved", Icons.Filled.History, Icons.Outlined.History, "tab_history")
 }
 
 @Composable
@@ -67,45 +68,49 @@ fun QrMainScreen(viewModel: QrViewModel) {
     Scaffold(
         modifier = Modifier
             .fillMaxSize()
-            .background(ScannerDarkBg),
+            .background(ClassicBg),
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         bottomBar = {
-            NavigationBar(
+            Box(
                 modifier = Modifier
-                    .background(ScannerSurface)
+                    .background(ClassicSurface)
                     .windowInsetsPadding(WindowInsets.navigationBars)
-                    .testTag("qr_bottom_navigation"),
-                containerColor = ScannerSurface,
-                tonalElevation = 8.dp
             ) {
-                QrNavigationTab.values().forEach { tab ->
-                    val isSelected = selectedTab == tab
-                    NavigationBarItem(
-                        selected = isSelected,
-                        onClick = { selectedTab = tab },
-                        icon = {
-                            Icon(
-                                imageVector = if (isSelected) tab.selectedIcon else tab.unselectedIcon,
-                                contentDescription = tab.title,
-                                modifier = Modifier.size(24.dp)
-                            )
-                        },
-                        label = {
-                            Text(
-                                text = tab.title,
-                                fontSize = 11.sp,
-                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
-                            )
-                        },
-                        colors = NavigationBarItemDefaults.colors(
-                            selectedIconColor = NeonCyan,
-                            selectedTextColor = NeonCyan,
-                            unselectedIconColor = TextMuted,
-                            unselectedTextColor = TextMuted,
-                            indicatorColor = Color(0x3300E5FF)
-                        ),
-                        modifier = Modifier.testTag(tab.testTag)
-                    )
+                HorizontalDivider(color = ClassicBorder, thickness = 1.dp)
+                NavigationBar(
+                    modifier = Modifier.testTag("qr_bottom_navigation"),
+                    containerColor = ClassicSurface,
+                    tonalElevation = 0.dp
+                ) {
+                    QrNavigationTab.values().forEach { tab ->
+                        val isSelected = selectedTab == tab
+                        NavigationBarItem(
+                            selected = isSelected,
+                            onClick = { selectedTab = tab },
+                            icon = {
+                                Icon(
+                                    imageVector = if (isSelected) tab.selectedIcon else tab.unselectedIcon,
+                                    contentDescription = tab.title,
+                                    modifier = Modifier.size(26.dp)
+                                )
+                            },
+                            label = {
+                                Text(
+                                    text = tab.title,
+                                    fontSize = 13.sp,
+                                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
+                                )
+                            },
+                            colors = NavigationBarItemDefaults.colors(
+                                selectedIconColor = ClassicBlue,
+                                selectedTextColor = ClassicBlue,
+                                unselectedIconColor = TextDarkMuted,
+                                unselectedTextColor = TextDarkMuted,
+                                indicatorColor = ClassicBlueContainer
+                            ),
+                            modifier = Modifier.testTag(tab.testTag)
+                        )
+                    }
                 }
             }
         }
