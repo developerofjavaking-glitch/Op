@@ -1,0 +1,24 @@
+{
+  "name": "Android Kotlin Dev Environment",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "java.configuration.runtimes": [
+          {
+            "name": "JavaSE-17",
+            "path": "/opt/java/openjdk",
+            "default": true
+          }
+        ]
+      },
+      "extensions": [
+        "mathiasfrohlich.Kotlin",
+        "vscjava.vscode-java-pack"
+      ]
+    }
+  },
+  "remoteUser": "vscode"
+}
