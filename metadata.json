@@ -1,0 +1,6 @@
+{
+  "name": "QR Scanner",
+  "description": "Smart, fast QR code and barcode scanner with live camera detection, image gallery scanning, QR code generator, and history.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
